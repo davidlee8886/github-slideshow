@@ -7,20 +7,21 @@ jobs:
   build-and-test:  
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # Be sure to update the tag on this image to a more stable version, using latest can result in unstable builds.
+    # Be sure to update the Docker image tag below to openjdk version of your application.
+    # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
     docker:
-      - image: microsoft/dotnet:latest
+      - image: cimg/openjdk:11.0
     steps:
       # Checkout the code as the first step.
       - checkout
-      # Then simply use the dotnet container as you'd expect and run your tests
+      # Use mvn clean and package as the standard maven build phase
       - run:
-          # Update this line with the directory that contains your tests project file
-          working_directory: ~/project/App.Tests
-          name: Run tests
-          command: |
-            dotnet test
-            
+          name: Build
+          command: mvn -B -DskipTests clean package
+      # Then run your tests!
+      - run:
+          name: Test
+          command: mvn test
 
 workflows:
   # Below is the definition of your workflow.
